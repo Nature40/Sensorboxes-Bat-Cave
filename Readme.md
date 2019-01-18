@@ -7,13 +7,13 @@ BatCave is a sattelite (low-power sensor) of the Nature 4.0 project. It is desig
 The chosen components are listed here, each with it's important features named.
 
 - TTGO LoRa 868 MHz
- - ESP32: WiFi, DeepSleep
- - SX1278 LoRa Modem
+  - ESP32: WiFi, DeepSleep
+  - SX1278 LoRa Modem
 - SD Card Breakout Board (pick any)
 - PCF8523 Real-Time-Clock (exact measurements without further infrastructure)
 - DS18B20 Temperature Sensors
- - no deviations with long cables (digital protocol)
- - OneWire protocol (simply scaleable)
+  - no deviations with long cables (digital protocol)
+  - OneWire protocol (simply scaleable)
  
 ![TTGO LoRa Pinout](TTGO-LoRa.jpg)
 
@@ -31,18 +31,20 @@ The chosen components are listed here, each with it's important features named.
 #define SCL 22
 ```
 
+The TTGO LoRa provides 3x GND, 2x 5V and 2x 3.3V. Most SD card breakouts, the RTC and the temperature sensors can run on 5V and can therefore be chosen freely. However I'd recommend to use 5V for the temperature sensors, especially when using longer (> 1m) cables. 
+
 ## Operation
 
 The normal operation consists of:
 
-- initialize all the hardware
-- list all connected temperature sensors and read their values
-- log the readings to one CSV file per sensor
-- send the readings via WiFi to the next BaumBox
-- send the readings via LoRa to a gateway (also used as status-update
-- fall into deep sleep
+- **initialize** all the hardware
+- list and **read** all connected **temperature** sensors
+- log the readings to one **CSV** file per sensor
+- send the readings via **WiFi** to the next BaumBox
+- send the readings via **LoRa** to a gateway (also used as status-update)
+- fall into **deep sleep**
 
-If one step fails, this error needs to be logged, and the rest of the operation shall continue. 
+If one step fails, this error needs to be logged, and the rest of the operation shall continue, for example:
 
 - If the SD is not available, the values shall still be send.
 - If the RTC is n/a, the values shall still be logged and send, since a less accurate timestamp can still be assigned at the receiver.
