@@ -1,4 +1,5 @@
 # BatCave
+[![Build Status](https://travis-ci.org/Nature40/Satellite-BatCave.svg?branch=master)](https://travis-ci.org/Nature40/Satellite-BatCave)
 
 BatCave is a sattelite (low-power sensor) of the Nature 4.0 project. It is designed to monitor the temperature inside of tree holes in low frequencies (> 1min) over a long period of time without changing the Battery. 
 
@@ -9,7 +10,6 @@ The chosen components are listed here, each with it's important features named.
 - TTGO LoRa 868 MHz
   - ESP32: WiFi, DeepSleep
   - SX1278 LoRa Modem
-  - direct LiPo connection (JST 1.25) 
 - SD Card Breakout Board (pick any)
 - PCF8523 Real-Time-Clock (exact measurements without further infrastructure)
 - DS18B20 Temperature Sensors
@@ -57,5 +57,3 @@ The TTGO LoRa is kind of picky when using together with an SD breakout, the actu
 ## Known bugs
 
 The deep sleep function of the ESP boards is very low power, which can lead to a shutdown of powerbanks (a function useful, when a charging smartphones is filled).
- 
-The TTGO LoRa also got a LiPo charging controller, so a connected LiPo can be used instead. Also [18650 Li-ion battery shields](https://www.aliexpress.com/item/Wemos-18650-Battery-shield-V3-RaspberryPi-Arduino/32814189613.html) work fine, since they have no power-down logic. 
