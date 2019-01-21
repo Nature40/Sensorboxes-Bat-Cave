@@ -57,3 +57,33 @@ The TTGO LoRa is kind of picky when using together with an SD breakout, the actu
 ## Known bugs
 
 The deep sleep function of the ESP boards is very low power, which can lead to a shutdown of powerbanks (a function useful, when a charging smartphones is filled).
+
+### SD Breakout Power Consumption
+
+The SD Card Breakout also uses quite an amount of power:
+
+```
+     ms, shunt_mV,    bus_V, current_mA,  power_mW
+2876943,   -0.630, 3.332000,  -6.300000, 20.000000
+```
+
+A suggested solution is, to use a GPIO pin for powering the SD card, that is on low during deep sleep.
+
+### TTGO LoRa Power Consumption
+
+The TTGO LoRa v1 has trouble with power consumption. As discussed in [this forum](https://www.thethingsnetwork.org/forum/t/big-esp32-sx127x-topic-part-1/10247), the CP2102 usb-serial chip is in an active state when turned on and only going to suspend after beeing disconnected from a USB host. Possible fixes are suggested [here](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/issues/6#issuecomment-403254130).
+
+The board will draw ~3 mAh with disabled CP2102 in contrast to ~10 mAh with a suspended CP2102.
+
+```
+     ms, shunt_mV,    bus_V, current_mA,  power_mW,     state
+  80305,   -0.290, 3.336000,  -3.100000, 10.000000, suspended
+ 121786,   -1.020, 3.328000, -10.200000, 36.000000,    active
+```
+
+Also, the SX1276 LoRa modem has a low power mode which ineffective when the TTGO is in deep sleep (resulting from a high pin in deep sleep). 
+
+Possible alternatives:
+
+ - Heltec Wireless Stick (~25€)
+ - TTGO T-Fox (~25€)
