@@ -20,16 +20,10 @@
 #define SD_MOSI 12
 #define SD_MISO 13
 
-#define LORA_FREQ 868.0
-
 #define LOG_PATH "/batcave.log"
 
 // The sd card can also use a virtual SPI bus
 SPIClass sd_spi(HSPI);
-
-// Use a virtual (software) SPI bus for the sx1278
-RHSoftwareSPI sx1278_spi;
-RH_RF95 rf95(LORA_CS, LORA_IRQ, sx1278_spi);
 
 RTC_PCF8523 rtc;
 
@@ -38,7 +32,6 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
 void log(char *logstring) {
-
     File file = SD.open(LOG_PATH, FILE_APPEND);
     if (!file) {
         Serial.printf("Logging error: couldn't open logfile.");
@@ -56,7 +49,7 @@ void addReading(uint32_t time, DeviceAddress deviceAddress, float tempC) {
         deviceAddress[0], deviceAddress[1], deviceAddress[2], deviceAddress[3],
         deviceAddress[4], deviceAddress[5], deviceAddress[6], deviceAddress[7]);
 
-    Serial.printf("%i,%s,%f\n", time, deviceString, tempC);
+    Serial.printf("%i, %s, %f\n", time, deviceString, tempC);
 
     char csv_path[27];
     snprintf(csv_path, 27, "/temp_%s.csv", deviceString);
@@ -79,15 +72,13 @@ void printOneWireAddress(DeviceAddress deviceAddress) {
 }
 
 void setup() {
-    delay(500);
-
     // Builtin LED
     pinMode(LED_BUILTIN, OUTPUT);
 
     // Serial output
     Serial.begin(115200);
 
-    // SD Card
+    // init SD card
     sd_spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
 
     if (!SD.begin(SD_CS, sd_spi))
@@ -104,41 +95,6 @@ void setup() {
     } else {
         Serial.println("RTC: initialized");
     }
-
-
-    // LoRa: Init
-    pinMode(LORA_RST, OUTPUT);
-    digitalWrite(LORA_RST, LOW);
-    delay(100);
-    digitalWrite(LORA_RST, HIGH);
-
-    // the pins for the virtual SPI explicitly to the internal connection
-    sx1278_spi.setPins(LORA_MISO, LORA_MOSI, LORA_SCK);
-
-    if (!rf95.init()) {
-        log("LORA_INIT_FAILED");
-        Serial.println("LoRa Radio: init failed.");
-    } else {
-        Serial.println("LoRa Radio: init OK!");
-    }
-
-    // LoRa: set frequency
-    if (!rf95.setFrequency(LORA_FREQ)){
-        log("LORA_SET_FREQ_FAILED");
-        Serial.println("LoRa Radio: setFrequency failed.");
-    } else {
-        Serial.printf("LoRa Radio: freqency set to %f MHz\n", LORA_FREQ);
-    }
-
-    if (!rf95.setModemConfig(RH_RF95::Bw125Cr45Sf128)){
-        log("LORA_SET_MODEMCONFIG_FAILED");
-        Serial.println("LoRa Radio: setModemConfig failed.");
-    } else {
-        Serial.printf("LoRa Radio: modem config set to Bw125Cr45Sf128\n", LORA_FREQ);
-    }
-    
-    // LoRa: Set max (23 dbm) transmission power. 
-    rf95.setTxPower(23, false);
 
 
     // DS18B20: Init
@@ -161,6 +117,7 @@ void setup() {
 }
 
 void loop() {
+    Serial.println("Entering deep sleep.");
     esp_sleep_enable_timer_wakeup(SENSOR_INTERVAL_uS);
     esp_deep_sleep_start();
 }

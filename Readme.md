@@ -1,16 +1,14 @@
 # BatCave
 [![Build Status](https://travis-ci.org/Nature40/Satellite-BatCave.svg?branch=master)](https://travis-ci.org/Nature40/Satellite-BatCave)
 
-BatCave is a sattelite (low-power sensor) of the Nature 4.0 project. It is designed to monitor the temperature inside of tree holes in low frequencies (> 1min) over a long period of time without changing the Battery. 
+BatCave is a sattelite (low-power sensor) of the Nature 4.0 project. It is designed to monitor the temperature inside of tree holes in low frequencies (> 1min) over a long period of time without changing the Battery.
 
-## Components 
+## Components
 
 The chosen components are listed here, each with it's important features named.
 
-- TTGO LoRa 868 MHz
-  - ESP32: WiFi, DeepSleep
-  - SX1278 LoRa Modem
-- SD Card Breakout Board (pick any)
+- ESP32 Board
+- SD Card Breakout Board (Adafruit)
 - PCF8523 Real-Time-Clock (exact measurements without further infrastructure)
 - DS18B20 Temperature Sensors
   - no deviations with long cables (digital protocol)
@@ -42,7 +40,6 @@ The normal operation consists of:
 - list and **read** all connected **temperature** sensors
 - log the readings to one **CSV** file per sensor
 - send the readings via **WiFi** to the next BaumBox
-- send the readings via **LoRa** to a gateway (also used as status-update)
 - fall into **deep sleep**
 
 If one step fails, this error needs to be logged, and the rest of the operation shall continue, for example:
@@ -57,17 +54,6 @@ The TTGO LoRa is kind of picky when using together with an SD breakout, the actu
 ## Known bugs
 
 The deep sleep function of the ESP boards is very low power, which can lead to a shutdown of powerbanks (a function useful, when a charging smartphones is filled).
-
-### SD Breakout Power Consumption
-
-The SD Card Breakout also uses quite an amount of power:
-
-```
-     ms, shunt_mV,    bus_V, current_mA,  power_mW
-2876943,   -0.630, 3.332000,  -6.300000, 20.000000
-```
-
-A suggested solution is, to use a GPIO pin for powering the SD card, that is on low during deep sleep.
 
 ### TTGO LoRa Power Consumption
 
